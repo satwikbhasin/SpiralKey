@@ -31,3 +31,13 @@ body {
     text-wrap: balance;
   }
 }
+
+.gradient {
+  background: linear-gradient(90deg, hsla(227, 100%, 84%, 1) 0%, hsla(317, 29%, 42%, 1) 100%);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+}
+
