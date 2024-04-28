@@ -33,7 +33,11 @@ body {
 }
 
 .gradient {
-  background: linear-gradient(90deg, hsla(227, 100%, 84%, 1) 0%, hsla(317, 29%, 42%, 1) 100%);
+  background: linear-gradient(
+    90deg,
+    hsla(227, 100%, 84%, 1) 0%,
+    hsla(317, 29%, 42%, 1) 100%
+  );
   -webkit-background-clip: text;
   -moz-background-clip: text;
   background-clip: text;
@@ -41,3 +45,8 @@ body {
   text-fill-color: transparent;
 }
 
+.jersey-15 {
+  font-family: "Jersey 15", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
