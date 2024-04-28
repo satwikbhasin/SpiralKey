@@ -47,7 +47,7 @@ export default function Decryption() {
       setTimeout(() => {
         setSpiralEncryptionStatus(EncryptionState.DONE);
         setSpiralCipher("DUMMY_SPIRAL_CIPHER");
-        setFinalCipher(spiralCipher);
+        setFinalCipher("DUMMY_SPIRAL_CIPHER");
       }, 3000);
     }, 3000);
   }
@@ -91,7 +91,10 @@ export default function Decryption() {
         <TextareaAutosize
           value={plaintext}
           onChange={(e) => setPlaintext(e.target.value)}
-          disabled={symmetricEncryptionStatus === EncryptionState.IN_PROGRESS}
+          disabled={
+            symmetricEncryptionStatus !== EncryptionState.IDLE ||
+            spiralEncryptionStatus !== EncryptionState.IDLE
+          }
           onKeyDown={(e) => {
             if (e.key === "Enter" && plaintext.trim() !== "") {
               handleEncrypt();
@@ -116,7 +119,8 @@ export default function Decryption() {
           }}
           disabled={
             !plaintext.trim() ||
-            symmetricEncryptionStatus === EncryptionState.IN_PROGRESS
+            symmetricEncryptionStatus !== EncryptionState.IDLE ||
+            spiralEncryptionStatus !== EncryptionState.IDLE
           }
           sx={{
             background: "#8d5380",
@@ -181,7 +185,7 @@ export default function Decryption() {
               >
                 Symmetric Encryption
               </Typography>
-              <CheckCircleIcon fontSize="small" />
+              <CheckCircleIcon sx={{ color: "#fa9c2f" }} fontSize="small" />
             </Box>
             <Box
               sx={{
@@ -262,7 +266,7 @@ export default function Decryption() {
                 >
                   Spiral Encryption
                 </Typography>
-                <CheckCircleIcon fontSize="small" />
+                <CheckCircleIcon sx={{ color: "#fa9c2f" }} fontSize="small" />
               </Box>
               <Box
                 sx={{
@@ -323,7 +327,7 @@ export default function Decryption() {
                     mr: 1,
                   }}
                 >
-                  Generated Cipher =
+                  Deciphered Plain Text =
                 </Typography>
                 <TextareaAutosize
                   value={finalCipher}
@@ -349,96 +353,6 @@ export default function Decryption() {
                   sx={{ marginLeft: 1, color: "#fff" }}
                 >
                   {cipherCopied ? <CheckCircleIcon /> : <FileCopyIcon />}
-                </IconButton>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  mb: 5,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  className="jersey-15"
-                  sx={{
-                    textAlign: "center",
-                    mb: 1,
-                    mr: 1,
-                  }}
-                >
-                  Key 1 =
-                </Typography>
-                <TextareaAutosize
-                  value={key1}
-                  disabled
-                  maxRows={3}
-                  style={{
-                    flex: 1,
-                    overflow: "auto",
-                    color: "#6c6c74",
-                    backgroundColor: "#1f1f1f",
-                    border: "1px solid #6c6c74",
-                    padding: 10,
-                    minWidth: "50vw",
-                    borderRadius: 5,
-                  }}
-                />
-                <IconButton
-                  onClick={() => {
-                    navigator.clipboard.writeText(key1);
-                    setKey1Copied(true);
-                    setTimeout(() => setKey1Copied(false), 3000);
-                  }}
-                  sx={{ marginLeft: 1, color: "#fff" }}
-                >
-                  {key1Copied ? <CheckCircleIcon /> : <FileCopyIcon />}
-                </IconButton>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  mb: 5,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  className="jersey-15"
-                  sx={{
-                    textAlign: "center",
-                    mb: 1,
-                    mr: 1,
-                  }}
-                >
-                  Key 2 =
-                </Typography>
-                <TextareaAutosize
-                  value={key2}
-                  disabled
-                  maxRows={3}
-                  style={{
-                    flex: 1,
-                    overflow: "auto",
-                    color: "#6c6c74",
-                    backgroundColor: "#1f1f1f",
-                    border: "1px solid #6c6c74",
-                    padding: 10,
-                    minWidth: "50vw",
-                    borderRadius: 5,
-                  }}
-                />
-                <IconButton
-                  onClick={() => {
-                    navigator.clipboard.writeText(key2);
-                    setKey2Copied(true);
-                    setTimeout(() => setKey2Copied(false), 3000);
-                  }}
-                  sx={{ marginLeft: 1, color: "#fff" }}
-                >
-                  {key2Copied ? <CheckCircleIcon /> : <FileCopyIcon />}
                 </IconButton>
               </Box>
             </Box>

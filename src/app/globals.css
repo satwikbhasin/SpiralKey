@@ -35,8 +35,8 @@ body {
 .gradient {
   background: linear-gradient(
     90deg,
-    hsla(227, 100%, 84%, 1) 0%,
-    hsla(317, 29%, 42%, 1) 100%
+    rgba(138, 76, 121, 1) 0%,
+    rgba(250, 156, 47, 1) 100%
   );
   -webkit-background-clip: text;
   -moz-background-clip: text;

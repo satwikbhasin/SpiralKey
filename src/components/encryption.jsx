@@ -45,9 +45,9 @@ export default function Encryption() {
       setKey2("DUMMY_KEY_2");
       setSpiralEncryptionStatus(EncryptionState.IN_PROGRESS);
       setTimeout(() => {
-        setSpiralEncryptionStatus(EncryptionState.DONE);
         setSpiralCipher("DUMMY_SPIRAL_CIPHER");
-        setFinalCipher(spiralCipher);
+        setFinalCipher("DUMMY_SPIRAL_CIPHER");
+        setSpiralEncryptionStatus(EncryptionState.DONE);
       }, 3000);
     }, 3000);
   }
@@ -91,7 +91,10 @@ export default function Encryption() {
         <TextareaAutosize
           value={plaintext}
           onChange={(e) => setPlaintext(e.target.value)}
-          disabled={symmetricEncryptionStatus === EncryptionState.IN_PROGRESS}
+          disabled={
+            symmetricEncryptionStatus !== EncryptionState.IDLE ||
+            spiralEncryptionStatus !== EncryptionState.IDLE
+          }
           onKeyDown={(e) => {
             if (e.key === "Enter" && plaintext.trim() !== "") {
               handleEncrypt();
@@ -116,14 +119,15 @@ export default function Encryption() {
           }}
           disabled={
             !plaintext.trim() ||
-            symmetricEncryptionStatus === EncryptionState.IN_PROGRESS
+            symmetricEncryptionStatus !== EncryptionState.IDLE ||
+            spiralEncryptionStatus !== EncryptionState.IDLE
           }
           sx={{
             background: "#8d5380",
             mt: 3,
             "&:hover": {
-                background: "#fa9c2f",
-              },
+              background: "#fa9c2f",
+            },
           }}
         >
           <Typography variant="body" className="jersey-15">
@@ -181,7 +185,7 @@ export default function Encryption() {
               >
                 Symmetric Encryption
               </Typography>
-              <CheckCircleIcon fontSize="small" />
+              <CheckCircleIcon sx={{ color: "#fa9c2f" }} fontSize="small" />
             </Box>
             <Box
               sx={{
@@ -262,7 +266,7 @@ export default function Encryption() {
                 >
                   Spiral Encryption
                 </Typography>
-                <CheckCircleIcon fontSize="small" />
+                <CheckCircleIcon sx={{ color: "#fa9c2f" }} fontSize="small" />
               </Box>
               <Box
                 sx={{

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import dynamic from "next/dynamic";
 import CircularProgress from "@mui/material/CircularProgress";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 const Loader = () => (
   <Box
@@ -33,6 +34,16 @@ export default function Home() {
     DECRYPTION: "decryption",
   };
   const [mode, setMode] = useState(AppMode.ENCRYPTION);
+  const [encryptionKey, setEncryptionKey] = useState(0);
+  const [decryptionKey, setDecryptionKey] = useState(0);
+
+  const reloadEncryption = () => {
+    setEncryptionKey((prevKey) => prevKey + 1);
+  };
+
+  const reloadDecryption = () => {
+    setDecryptionKey((prevKey) => prevKey + 1);
+  };
   return (
     <div
       style={{
@@ -96,6 +107,11 @@ export default function Home() {
             fontSize: "1.4rem",
           }}
           className="jersey-15"
+          endIcon={
+            mode === AppMode.ENCRYPTION ? (
+              <RefreshIcon onClick={reloadEncryption} />
+            ) : null
+          }
         >
           Encryption
         </Button>
@@ -109,11 +125,20 @@ export default function Home() {
           }}
           onClick={() => setMode(AppMode.DECRYPTION)}
           className="jersey-15"
+          endIcon={
+            mode === AppMode.DECRYPTION ? (
+              <RefreshIcon onClick={reloadDecryption} />
+            ) : null
+          }
         >
           Decryption
         </Button>
       </Box>
-      {mode === AppMode.ENCRYPTION ? <Encryption /> : <Decryption />}
+      {mode === AppMode.ENCRYPTION ? (
+        <Encryption key={encryptionKey} />
+      ) : (
+        <Decryption key={decryptionKey} />
+      )}
     </div>
   );
 }
