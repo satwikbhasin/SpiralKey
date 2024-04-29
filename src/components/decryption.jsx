@@ -9,76 +9,75 @@ import "../app/globals.css";
 import { useState, useEffect, useRef } from "react";
 
 export default function Decryption() {
-  const [plaintext, setPlaintext] = useState("");
+  const [ciphertext, setCiphertext] = useState("");
   const [symmetricCipher, setSymmetricCipher] = useState("");
-  const [spiralCipher, setSpiralCipher] = useState("");
+  const [spiralCipher, setSpiralcipher] = useState("");
   const [finalCipher, setFinalCipher] = useState("");
   const [key1, setKey1] = useState("");
   const [key2, setKey2] = useState("");
 
-  const [cipherCopied, setCipherCopied] = useState(false);
-  const [key1Copied, setKey1Copied] = useState(false);
-  const [key2Copied, setKey2Copied] = useState(false);
+  const [plaintextCopied, setPlaintextCopied] = useState(false);
 
-  const EncryptionState = {
+  const DecryptionState = {
     IDLE: "idle",
     IN_PROGRESS: "in-progress",
     DONE: "done",
   };
-  const [symmetricEncryptionStatus, setSymmetricEncryptionStatus] = useState(
-    EncryptionState.IDLE
+
+  const [spiralDecryptionStatus, setSpiralDecryptionStatus] = useState(
+    DecryptionState.IDLE
   );
-  const [spiralEncryptionStatus, setSpiralEncryptionStatus] = useState(
-    EncryptionState.IDLE
+  const [symmetricDecryptionStatus, setSymmetricDecryptionStatus] = useState(
+    DecryptionState.IDLE
   );
 
-  const symmetricCipherRef = useRef(null);
   const spiralCipherRef = useRef(null);
+  const symmetricCipherRef = useRef(null);
 
   useEffect(() => {
-    if (symmetricCipher && symmetricEncryptionStatus === EncryptionState.DONE) {
+    if (symmetricCipher && symmetricDecryptionStatus === DecryptionState.DONE) {
       symmetricCipherRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    if (spiralCipher && spiralEncryptionStatus === EncryptionState.DONE) {
+    if (spiralCipher && spiralDecryptionStatus === DecryptionState.DONE) {
       spiralCipherRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [
     symmetricCipher,
     spiralCipher,
-    symmetricEncryptionStatus,
-    spiralEncryptionStatus,
+    symmetricDecryptionStatus,
+    spiralDecryptionStatus,
   ]);
 
-  function handleEncrypt() {
-    if (plaintext.trim() === "") {
+  function handleDecrypt() {
+    if (ciphertext.trim() === "") {
       return;
     }
-    console.log("Encrypting", plaintext);
-    setSymmetricEncryptionStatus(EncryptionState.IN_PROGRESS);
+    console.log("Encrypting", ciphertext);
+    setSymmetricDecryptionStatus(DecryptionState.IN_PROGRESS);
     setTimeout(() => {
-      setSymmetricEncryptionStatus(EncryptionState.DONE);
+      setSymmetricDecryptionStatus(DecryptionState.DONE);
       setSymmetricCipher("DUMMY_SYMMETRIC_CIPHER");
       setKey1("DUMMY_KEY_1");
       setKey2("DUMMY_KEY_2");
-      setSpiralEncryptionStatus(EncryptionState.IN_PROGRESS);
+      setSpiralDecryptionStatus(DecryptionState.IN_PROGRESS);
       setTimeout(() => {
-        setSpiralEncryptionStatus(EncryptionState.DONE);
-        setSpiralCipher("DUMMY_SPIRAL_CIPHER");
+        setSpiralDecryptionStatus(DecryptionState.DONE);
+        setSpiralcipher("DUMMY_SPIRAL_CIPHER");
         setFinalCipher("DUMMY_SPIRAL_CIPHER");
       }, 3000);
     }, 3000);
   }
 
   useEffect(() => {
-    console.log("Symmetric Encryption Status", symmetricEncryptionStatus);
-    console.log("Spiral Encryption Status", spiralEncryptionStatus);
-  }, [symmetricEncryptionStatus, spiralEncryptionStatus]);
+    console.log("Symmetric Encryption Status", symmetricDecryptionStatus);
+    console.log("Spiral Encryption Status", spiralDecryptionStatus);
+  }, [symmetricDecryptionStatus, spiralDecryptionStatus]);
 
   useEffect(() => {
-    setSymmetricEncryptionStatus(EncryptionState.IDLE);
-    setSpiralEncryptionStatus(EncryptionState.IDLE);
+    setSymmetricDecryptionStatus(DecryptionState.IDLE);
+    setSpiralDecryptionStatus(DecryptionState.IDLE);
     setFinalCipher("");
-  }, [plaintext]);
+  }, [ciphertext]);
 
   return (
     <div>
@@ -106,15 +105,98 @@ export default function Decryption() {
           Cipher Text
         </Typography>
         <TextareaAutosize
-          value={plaintext}
-          onChange={(e) => setPlaintext(e.target.value)}
+          value={ciphertext}
+          onChange={(e) => setCiphertext(e.target.value)}
           disabled={
-            symmetricEncryptionStatus !== EncryptionState.IDLE ||
-            spiralEncryptionStatus !== EncryptionState.IDLE
+            symmetricDecryptionStatus !== DecryptionState.IDLE ||
+            spiralDecryptionStatus !== DecryptionState.IDLE
           }
           onKeyDown={(e) => {
-            if (e.key === "Enter" && plaintext.trim() !== "") {
-              handleEncrypt();
+            if (
+              e.key === "Enter" &&
+              ciphertext.trim() !== "" &&
+              key1.trim() !== "" &&
+              key2.trim() !== ""
+            ) {
+              handleDecrypt();
+              e.preventDefault();
+            }
+          }}
+          style={{
+            width: "100%",
+            overflow: "auto",
+            color: "#6c6c74",
+            backgroundColor: "#1f1f1f",
+            border: "1px solid #6c6c74",
+            padding: 10,
+            borderRadius: 5,
+          }}
+        />
+        <Typography
+          variant="h6"
+          className="jersey-15"
+          sx={{
+            textAlign: "center",
+            mb: 1,
+            mt: 2,
+          }}
+        >
+          Key 1
+        </Typography>
+        <TextareaAutosize
+          value={key1}
+          onChange={(e) => setKey1(e.target.value)}
+          disabled={
+            symmetricDecryptionStatus !== DecryptionState.IDLE ||
+            spiralDecryptionStatus !== DecryptionState.IDLE
+          }
+          onKeyDown={(e) => {
+            if (
+              e.key === "Enter" &&
+              ciphertext.trim() !== "" &&
+              key1.trim() !== "" &&
+              key2.trim() !== ""
+            ) {
+              handleDecrypt();
+              e.preventDefault();
+            }
+          }}
+          style={{
+            width: "100%",
+            overflow: "auto",
+            color: "#6c6c74",
+            backgroundColor: "#1f1f1f",
+            border: "1px solid #6c6c74",
+            padding: 10,
+            borderRadius: 5,
+          }}
+        />
+        <Typography
+          variant="h6"
+          className="jersey-15"
+          sx={{
+            textAlign: "center",
+            mb: 1,
+            mt: 2,
+          }}
+        >
+          Key 2
+        </Typography>
+        <TextareaAutosize
+          value={key2}
+          onChange={(e) => setKey2(e.target.value)}
+          disabled={
+            symmetricDecryptionStatus !== DecryptionState.IDLE ||
+            spiralDecryptionStatus !== DecryptionState.IDLE
+          }
+          onKeyDown={(e) => {
+            if (
+              e.key === "Enter" &&
+              ciphertext.trim() !== "" &&
+              key1.trim() !== "" &&
+              key2.trim() !== ""
+            ) {
+              handleDecrypt();
               e.preventDefault();
             }
           }}
@@ -132,12 +214,12 @@ export default function Decryption() {
           variant="contained"
           startIcon={<LockIcon />}
           onClick={() => {
-            handleEncrypt();
+            handleDecrypt();
           }}
           disabled={
-            !plaintext.trim() ||
-            symmetricEncryptionStatus !== EncryptionState.IDLE ||
-            spiralEncryptionStatus !== EncryptionState.IDLE
+            !ciphertext.trim() ||
+            symmetricDecryptionStatus !== DecryptionState.IDLE ||
+            spiralDecryptionStatus !== DecryptionState.IDLE
           }
           sx={{
             background: "#8d5380",
@@ -160,7 +242,7 @@ export default function Decryption() {
           mt: 5,
         }}
       >
-        {symmetricEncryptionStatus === EncryptionState.IN_PROGRESS && (
+        {symmetricDecryptionStatus === DecryptionState.IN_PROGRESS && (
           <Box
             sx={{
               display: "flex",
@@ -179,7 +261,7 @@ export default function Decryption() {
           </Box>
         )}
 
-        {symmetricEncryptionStatus === EncryptionState.DONE && (
+        {symmetricDecryptionStatus === DecryptionState.DONE && (
           <Box
             sx={{
               display: "flex",
@@ -242,7 +324,7 @@ export default function Decryption() {
           mt: 5,
         }}
       >
-        {spiralEncryptionStatus === EncryptionState.IN_PROGRESS && (
+        {spiralDecryptionStatus === DecryptionState.IN_PROGRESS && (
           <Box
             sx={{
               display: "flex",
@@ -260,8 +342,8 @@ export default function Decryption() {
             <CircularProgress sx={{ color: "#fa9c2f" }} size="20px" />
           </Box>
         )}
-        {symmetricEncryptionStatus === EncryptionState.DONE &&
-          spiralEncryptionStatus === EncryptionState.DONE && (
+        {symmetricDecryptionStatus === DecryptionState.DONE &&
+          spiralDecryptionStatus === DecryptionState.DONE && (
             <Box
               sx={{
                 display: "flex",
@@ -326,8 +408,8 @@ export default function Decryption() {
           mt: 5,
         }}
       >
-        {symmetricEncryptionStatus === EncryptionState.DONE &&
-          spiralEncryptionStatus === EncryptionState.DONE && (
+        {symmetricDecryptionStatus === DecryptionState.DONE &&
+          spiralDecryptionStatus === DecryptionState.DONE && (
             <Box>
               <Box
                 sx={{
@@ -366,12 +448,12 @@ export default function Decryption() {
                 <IconButton
                   onClick={() => {
                     navigator.clipboard.writeText(finalCipher);
-                    setCipherCopied(true);
-                    setTimeout(() => setCipherCopied(false), 3000);
+                    setPlaintextCopied(true);
+                    setTimeout(() => setPlaintextCopied(false), 3000);
                   }}
                   sx={{ marginLeft: 1, color: "#fff" }}
                 >
-                  {cipherCopied ? <CheckCircleIcon /> : <FileCopyIcon />}
+                  {plaintextCopied ? <CheckCircleIcon /> : <FileCopyIcon />}
                 </IconButton>
               </Box>
             </Box>
