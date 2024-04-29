@@ -84,10 +84,10 @@ export default function Home() {
             mt: 2,
           }}
         >
-          <span>Symmetric Key</span>
+          <span>[Symmetric Key</span>
           <span> + </span>
-          <span>Spiral Matrix </span>
-          Encryption
+          <span>Spiral Matrix] </span>
+          Encryption/Decryption
         </Typography>
       </Box>
       <Box
