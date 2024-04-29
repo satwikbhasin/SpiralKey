@@ -6,7 +6,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import IconButton from "@mui/material/IconButton";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import "../app/globals.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Encryption() {
   const [plaintext, setPlaintext] = useState("");
@@ -31,6 +31,23 @@ export default function Encryption() {
   const [spiralEncryptionStatus, setSpiralEncryptionStatus] = useState(
     EncryptionState.IDLE
   );
+
+  const symmetricCipherRef = useRef(null);
+  const spiralCipherRef = useRef(null);
+
+  useEffect(() => {
+    if (symmetricCipher && symmetricEncryptionStatus === EncryptionState.DONE) {
+      symmetricCipherRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+    if (spiralCipher && spiralEncryptionStatus === EncryptionState.DONE) {
+      spiralCipherRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [
+    symmetricCipher,
+    spiralCipher,
+    symmetricEncryptionStatus,
+    spiralEncryptionStatus,
+  ]);
 
   function handleEncrypt() {
     if (plaintext.trim() === "") {
@@ -136,6 +153,7 @@ export default function Encryption() {
         </Button>
       </Box>
       <Box
+        ref={symmetricCipherRef}
         sx={{
           justifyContent: "center",
           display: "flex",
@@ -217,6 +235,7 @@ export default function Encryption() {
         )}
       </Box>
       <Box
+        ref={spiralCipherRef}
         sx={{
           justifyContent: "center",
           display: "flex",
