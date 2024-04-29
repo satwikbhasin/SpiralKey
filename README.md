@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Overview
+**SpiralKey** is a cutting-edge cryptographic method that combines the robustness of symmetric key encryption with the captivating properties of spiral matrices. This dual-layer approach ensures both security and intrigue, making it an exciting choice for safeguarding sensitive data.
 
-## Getting Started
+## How It Works
+1. **Symmetric Key Encryption**:
+   - **Step 1**: The plaintext message is first encrypted using a symmetric key algorithm (such as AES or DES). This process ensures confidentiality and authenticity.
+   - **Step 2**: The resulting ciphertext becomes the input for the next layer of encryption.
 
-First, run the development server:
+2. **Spiral Matrix Encryption**:
+   - **Step 3**: The ciphertext is divided into manageable blocks.
+   - **Step 4**: These blocks are arranged in a square matrix following a spiral pattern.
+   - **Step 5**: Sub-matrices are formed from this arrangement.
+   - **Step 6**: The column-wise bits of these sub-matrices contribute to the final encrypted binary string.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+3. **Symmetric Key Decryption**:
+   - **Step 7**: To decrypt, reverse the process:
+     - Reconstruct the square matrix from the encrypted binary string using the spiral pattern.
+     - Extract bits from the matrix (from most significant bit to least significant bit) to obtain the decrypted binary string.
+     - Regenerate the original ciphertext.
+     - Decrypt the ciphertext using the same symmetric key.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Advantages of SpiralKey
+- **Enhanced Security**: By combining symmetric encryption with spiral matrices, SpiralKey offers a double layer of protection.
+- **Efficiency**: The use of spiral matrices allows for efficient encoding and decoding.
+- **Intriguing Aesthetics**: The visual representation of spiral matrices adds an artistic touch to the encryption process.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Use Cases
+- **Secure Messaging**: SpiralKey can be used for confidential communication between parties.
+- **File Encryption**: Protect sensitive files using this innovative technique.
+- **Blockchain and Cryptocurrencies**: SpiralKey could enhance security in blockchain networks.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+**References**:
+1. Paul, M., & Mandal, J. K. (2013). *A Novel Symmetric Key Cryptographic Technique at Bit Level Based on Spiral Matrix Concept.* International Conference on Information Technology, Electronics and Communications (ICITEC – 2013).
+2. *Spiral Cipher: Enigmatic Disk Cipher.* Catencode.
+3. *Cryptography: Matrices and Encryption.* University of Utah.
+4. *Application of Matrices in Cryptography.* LibreTexts.
