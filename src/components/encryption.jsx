@@ -53,32 +53,28 @@ export default function Encryption() {
     if (plaintext.trim() === "") {
       return;
     }
-    console.log("Encrypting", plaintext);
     setSymmetricEncryptionStatus(EncryptionState.IN_PROGRESS);
-    setTimeout(() => {
-      setSymmetricEncryptionStatus(EncryptionState.DONE);
-      setSymmetricCipher("DUMMY_SYMMETRIC_CIPHER");
-      setKey1("DUMMY_KEY_1");
-      setKey2("DUMMY_KEY_2");
-      setSpiralEncryptionStatus(EncryptionState.IN_PROGRESS);
-      setTimeout(() => {
-        setSpiralCipher("DUMMY_SPIRAL_CIPHER");
-        setFinalCipher("DUMMY_SPIRAL_CIPHER");
-        setSpiralEncryptionStatus(EncryptionState.DONE);
-      }, 3000);
-    }, 3000);
+
+    // Call the async symmetric encryption service here
+    let [symmetricEncryptedText, generatedKey1, generatedKey2] = [
+      "DUMMY_SYMMETRIC_CIPHER",
+      "DUMMY_KEY_1",
+      "DUMMY_KEY_2",
+    ];
+    setSymmetricCipher(symmetricEncryptedText);
+    setKey1(generatedKey1);
+    setKey2(generatedKey2);
+    setSymmetricEncryptionStatus(EncryptionState.DONE);
+
+    setSpiralEncryptionStatus(EncryptionState.IN_PROGRESS);
+
+    // Call the async spiral encryption service here
+    let spiralEncryptedText = "DUMMY_SPIRAL_CIPHER";
+    setSpiralCipher(spiralEncryptedText);
+    setSpiralEncryptionStatus(EncryptionState.DONE);
+
+    setFinalCipher(spiralEncryptedText);
   }
-
-  useEffect(() => {
-    console.log("Symmetric Encryption Status", symmetricEncryptionStatus);
-    console.log("Spiral Encryption Status", spiralEncryptionStatus);
-  }, [symmetricEncryptionStatus, spiralEncryptionStatus]);
-
-  useEffect(() => {
-    setSymmetricEncryptionStatus(EncryptionState.IDLE);
-    setSpiralEncryptionStatus(EncryptionState.IDLE);
-    setFinalCipher("");
-  }, [plaintext]);
 
   return (
     <div>

@@ -51,33 +51,26 @@ export default function Decryption() {
     spiralDecryptionStatus,
   ]);
 
-  function handleDecrypt() {
-    if (ciphertext.trim() === "") {
+  const handleDecrypt = async () => {
+    if (ciphertext.trim() === "" || key1.trim() === "" || key2.trim() === "") {
       return;
     }
     setSpiralDecryptionStatus(DecryptionState.IN_PROGRESS);
-    setTimeout(() => {
-      setSpiralDecryptionStatus(DecryptionState.DONE);
-      setSpiralPlaintext("DUMMY_SPIRAL_PLAINTEXT");
-      setSymmetricDecryptionStatus(DecryptionState.IN_PROGRESS);
-      setTimeout(() => {
-        setSymmetricDecryptionStatus(DecryptionState.DONE);
-        setSymmetricPlaintext("DUMMY_SYMMETRIC_PLAINTEXT");
-        setFinalCipher("DUMMY_FINAL_PLAINTEXT");
-      }, 3000);
-    }, 3000);
-  }
 
-  useEffect(() => {
-    console.log("Symmetric Encryption Status", symmetricDecryptionStatus);
-    console.log("Spiral Encryption Status", spiralDecryptionStatus);
-  }, [symmetricDecryptionStatus, spiralDecryptionStatus]);
+    // Call the async spiral decryption service here
+    let spiralDecryptedText = "DUMMY_SPIRAL_PLAINTEXT";
+    setSpiralPlaintext(spiralDecryptedText);
+    setSpiralDecryptionStatus(DecryptionState.DONE);
 
-  useEffect(() => {
-    setSymmetricDecryptionStatus(DecryptionState.IDLE);
-    setSpiralDecryptionStatus(DecryptionState.IDLE);
-    setFinalCipher("");
-  }, [ciphertext]);
+    setSymmetricDecryptionStatus(DecryptionState.IN_PROGRESS);
+
+    // Call the async symmetric decryption service here
+    let symmetricDecryptedText = "DUMMY_SYMMETRIC_PLAINTEXT";
+    setSymmetricPlaintext(symmetricDecryptedText);
+    setSymmetricDecryptionStatus(DecryptionState.DONE);
+
+    setFinalCipher(symmetricDecryptedText);
+  };
 
   return (
     <div>
