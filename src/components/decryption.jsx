@@ -10,8 +10,8 @@ import { useState, useEffect, useRef } from "react";
 
 export default function Decryption() {
   const [ciphertext, setCiphertext] = useState("");
-  const [symmetricCipher, setSymmetricCipher] = useState("");
-  const [spiralCipher, setSpiralcipher] = useState("");
+  const [spiralPlaintext, setSpiralPlaintext] = useState("");
+  const [symmetricPlaintext, setSymmetricPlaintext] = useState("");
   const [finalCipher, setFinalCipher] = useState("");
   const [key1, setKey1] = useState("");
   const [key2, setKey2] = useState("");
@@ -35,15 +35,18 @@ export default function Decryption() {
   const symmetricCipherRef = useRef(null);
 
   useEffect(() => {
-    if (symmetricCipher && symmetricDecryptionStatus === DecryptionState.DONE) {
-      symmetricCipherRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-    if (spiralCipher && spiralDecryptionStatus === DecryptionState.DONE) {
+    if (spiralPlaintext && spiralDecryptionStatus === DecryptionState.DONE) {
       spiralCipherRef.current.scrollIntoView({ behavior: "smooth" });
     }
+    if (
+      symmetricPlaintext &&
+      symmetricDecryptionStatus === DecryptionState.DONE
+    ) {
+      symmetricCipherRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [
-    symmetricCipher,
-    spiralCipher,
+    symmetricPlaintext,
+    spiralPlaintext,
     symmetricDecryptionStatus,
     spiralDecryptionStatus,
   ]);
@@ -52,18 +55,15 @@ export default function Decryption() {
     if (ciphertext.trim() === "") {
       return;
     }
-    console.log("Encrypting", ciphertext);
-    setSymmetricDecryptionStatus(DecryptionState.IN_PROGRESS);
+    setSpiralDecryptionStatus(DecryptionState.IN_PROGRESS);
     setTimeout(() => {
-      setSymmetricDecryptionStatus(DecryptionState.DONE);
-      setSymmetricCipher("DUMMY_SYMMETRIC_CIPHER");
-      setKey1("DUMMY_KEY_1");
-      setKey2("DUMMY_KEY_2");
-      setSpiralDecryptionStatus(DecryptionState.IN_PROGRESS);
+      setSpiralDecryptionStatus(DecryptionState.DONE);
+      setSpiralPlaintext("DUMMY_SPIRAL_PLAINTEXT");
+      setSymmetricDecryptionStatus(DecryptionState.IN_PROGRESS);
       setTimeout(() => {
-        setSpiralDecryptionStatus(DecryptionState.DONE);
-        setSpiralcipher("DUMMY_SPIRAL_CIPHER");
-        setFinalCipher("DUMMY_SPIRAL_CIPHER");
+        setSymmetricDecryptionStatus(DecryptionState.DONE);
+        setSymmetricPlaintext("DUMMY_SYMMETRIC_PLAINTEXT");
+        setFinalCipher("DUMMY_FINAL_PLAINTEXT");
       }, 3000);
     }, 3000);
   }
@@ -218,6 +218,8 @@ export default function Decryption() {
           }}
           disabled={
             !ciphertext.trim() ||
+            !key1.trim() ||
+            !key2.trim() ||
             symmetricDecryptionStatus !== DecryptionState.IDLE ||
             spiralDecryptionStatus !== DecryptionState.IDLE
           }
@@ -235,14 +237,14 @@ export default function Decryption() {
         </Button>
       </Box>
       <Box
-        ref={symmetricCipherRef}
+        ref={spiralCipherRef}
         sx={{
           justifyContent: "center",
           display: "flex",
           mt: 5,
         }}
       >
-        {symmetricDecryptionStatus === DecryptionState.IN_PROGRESS && (
+        {spiralDecryptionStatus === DecryptionState.IN_PROGRESS && (
           <Box
             sx={{
               display: "flex",
@@ -255,11 +257,93 @@ export default function Decryption() {
               className="jersey-15"
               sx={{ color: "#fff", mr: 1 }}
             >
-              Symmetric Encryption
+              Spiral Decryption
             </Typography>
             <CircularProgress sx={{ color: "#fa9c2f" }} size="20px" />
           </Box>
         )}
+        {spiralDecryptionStatus === DecryptionState.DONE && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "80%",
+              height: "200px",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="h6"
+                className="jersey-15"
+                sx={{ color: "#fff", mr: 1 }}
+              >
+                Spiral Decryption
+              </Typography>
+              <CheckCircleIcon sx={{ color: "#fa9c2f" }} fontSize="small" />
+            </Box>
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                padding: 3,
+                borderRadius: 5,
+                border: "1px solid #6c6c74",
+                overflow: "scroll",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Typography
+                variant="body"
+                sx={{
+                  color: "#6c6c74",
+                  height: "100%",
+                  width: "100%",
+                  whiteSpace: "pre-wrap",
+                  wordWrap: "break-word",
+                }}
+              >
+                {spiralPlaintext}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </Box>
+      <Box
+        ref={symmetricCipherRef}
+        sx={{
+          justifyContent: "center",
+          display: "flex",
+          mt: 5,
+        }}
+      >
+        {spiralDecryptionStatus === DecryptionState.DONE &&
+          symmetricDecryptionStatus === DecryptionState.IN_PROGRESS && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="h6"
+                className="jersey-15"
+                sx={{ color: "#fff", mr: 1 }}
+              >
+                Symmetric Decryption
+              </Typography>
+              <CircularProgress sx={{ color: "#fa9c2f" }} size="20px" />
+            </Box>
+          )}
 
         {symmetricDecryptionStatus === DecryptionState.DONE && (
           <Box
@@ -283,7 +367,7 @@ export default function Decryption() {
                 className="jersey-15"
                 sx={{ color: "#fff", mr: 1 }}
               >
-                Symmetric Encryption
+                Symmetric Decryption
               </Typography>
               <CheckCircleIcon sx={{ color: "#fa9c2f" }} fontSize="small" />
             </Box>
@@ -310,93 +394,11 @@ export default function Decryption() {
                   wordWrap: "break-word",
                 }}
               >
-                {symmetricCipher}
+                {symmetricPlaintext}
               </Typography>
             </Box>
           </Box>
         )}
-      </Box>
-      <Box
-        ref={spiralCipherRef}
-        sx={{
-          justifyContent: "center",
-          display: "flex",
-          mt: 5,
-        }}
-      >
-        {spiralDecryptionStatus === DecryptionState.IN_PROGRESS && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              variant="h6"
-              className="jersey-15"
-              sx={{ color: "#fff", mr: 1 }}
-            >
-              Spiral Encryption
-            </Typography>
-            <CircularProgress sx={{ color: "#fa9c2f" }} size="20px" />
-          </Box>
-        )}
-        {symmetricDecryptionStatus === DecryptionState.DONE &&
-          spiralDecryptionStatus === DecryptionState.DONE && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                width: "80%",
-                height: "200px",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  className="jersey-15"
-                  sx={{ color: "#fff", mr: 1 }}
-                >
-                  Spiral Encryption
-                </Typography>
-                <CheckCircleIcon sx={{ color: "#fa9c2f" }} fontSize="small" />
-              </Box>
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  padding: 3,
-                  borderRadius: 5,
-                  border: "1px solid #6c6c74",
-                  overflow: "scroll",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Typography
-                  variant="body"
-                  sx={{
-                    color: "#6c6c74",
-                    height: "100%",
-                    width: "100%",
-                    whiteSpace: "pre-wrap",
-                    wordWrap: "break-word",
-                  }}
-                >
-                  {spiralCipher}
-                </Typography>
-              </Box>
-            </Box>
-          )}
       </Box>
       <Box
         sx={{
