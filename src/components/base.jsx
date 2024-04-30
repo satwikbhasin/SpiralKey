@@ -6,6 +6,7 @@ import { Button } from "@mui/material";
 import dynamic from "next/dynamic";
 import CircularProgress from "@mui/material/CircularProgress";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import Link from "next/link";
 
 const Loader = () => (
   <Box
@@ -60,15 +61,16 @@ export default function Base() {
             backgroundColor: "#181818",
           }}
         >
-          <Typography variant="h3" className="gradient jersey-15">
-            SpiralKey
-          </Typography>
+          <Link href="/">
+            <Typography variant="h3" className="gradient">
+              SpiralKey
+            </Typography>
+          </Link>
         </Toolbar>
       </AppBar>
       <Box>
         <Typography
           variant="h3"
-          className="jersey-15"
           sx={{
             textAlign: "center",
             mt: 10,
@@ -78,7 +80,7 @@ export default function Base() {
         </Typography>
         <Typography
           variant="h5"
-          className="gradient jersey-15"
+          className="gradient "
           sx={{
             textAlign: "center",
             mt: 2,
@@ -106,7 +108,6 @@ export default function Base() {
             textTransform: "lowercase",
             fontSize: "1.4rem",
           }}
-          className="jersey-15"
           endIcon={
             mode === AppMode.ENCRYPTION ? (
               <RefreshIcon onClick={reloadEncryption} />
@@ -124,7 +125,6 @@ export default function Base() {
             fontSize: "1.4rem",
           }}
           onClick={() => setMode(AppMode.DECRYPTION)}
-          className="jersey-15"
           endIcon={
             mode === AppMode.DECRYPTION ? (
               <RefreshIcon onClick={reloadDecryption} />
