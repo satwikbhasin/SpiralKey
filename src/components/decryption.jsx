@@ -1,20 +1,24 @@
 "use client";
 import { Typography, TextareaAutosize, Box, Button } from "@mui/material";
-import LockIcon from "@mui/icons-material/LockOutlined";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import CircularProgress from "@mui/material/CircularProgress";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import IconButton from "@mui/material/IconButton";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import "../app/globals.css";
 import { useState, useEffect, useRef } from "react";
+import ContentPasteIcon from "@mui/icons-material/ContentPaste";
+
+import { SpiralMatrixDecryption } from "@/services/spiralMatrixCipher";
+import { CeaserCipherDecryption } from "@/services/ceaserCipher";
 
 export default function Decryption() {
   const [ciphertext, setCiphertext] = useState("");
   const [spiralPlaintext, setSpiralPlaintext] = useState("");
   const [symmetricPlaintext, setSymmetricPlaintext] = useState("");
   const [finalCipher, setFinalCipher] = useState("");
-  const [key1, setKey1] = useState("");
-  const [key2, setKey2] = useState("");
+  const [spiralKey, setSpiralKey] = useState("");
+  const [symmetricKey, setSymmetricKey] = useState("");
 
   const [plaintextCopied, setPlaintextCopied] = useState(false);
 
@@ -34,6 +38,11 @@ export default function Decryption() {
   const spiralCipherRef = useRef(null);
   const symmetricCipherRef = useRef(null);
 
+  const pasteValue = async (setInputValue) => {
+    const text = await navigator.clipboard.readText();
+    setInputValue(text);
+  };
+
   useEffect(() => {
     if (spiralPlaintext && spiralDecryptionStatus === DecryptionState.DONE) {
       spiralCipherRef.current.scrollIntoView({ behavior: "smooth" });
@@ -51,21 +60,75 @@ export default function Decryption() {
     spiralDecryptionStatus,
   ]);
 
-  const handleDecrypt = async () => {
-    if (ciphertext.trim() === "" || key1.trim() === "" || key2.trim() === "") {
+  // const handleDecrypt = async () => {
+  //   if (
+  //     ciphertext.trim() === "" ||
+  //     spiralKey.trim() === "" ||
+  //     symmetricKey.trim() === ""
+  //   ) {
+  //     return;
+  //   }
+  //   setSpiralDecryptionStatus(DecryptionState.IN_PROGRESS);
+
+  //   // Call the async spiral decryption service here
+  //   let spiralDecryptionResult = SpiralMatrixDecryption(ciphertext, spiralKey);
+  //   console.log(spiralDecryptionResult);
+  //   // "DUMMY_SPIRAL_PLAINTEXT";
+  //   setSpiralPlaintext(spiralDecryptionResult);
+  //   setSpiralDecryptionStatus(DecryptionState.DONE);
+
+  //   setSymmetricDecryptionStatus(DecryptionState.IN_PROGRESS);
+
+  //   let [hashCode, length] = symmetricKey.split(",");
+  //   hashCode = parseInt(hashCode);
+  //   length = parseInt(length);
+
+  //   // Call the async symmetric decryption service here
+  //   let symmetricDecryptedText = CeaserCipherDecryption(
+  //     spiralDecryptionResult,
+  //     hashCode,
+  //     length
+  //   );
+  //   setSymmetricPlaintext(symmetricDecryptedText);
+  //   setSymmetricDecryptionStatus(DecryptionState.DONE);
+
+  //   setFinalCipher(symmetricDecryptedText);
+  // };
+
+  // Spiral decryption function
+  const handleSpiralDecryption = async () => {
+    if (ciphertext.trim() === "" || spiralKey.trim() === "") {
       return;
     }
     setSpiralDecryptionStatus(DecryptionState.IN_PROGRESS);
 
     // Call the async spiral decryption service here
-    let spiralDecryptedText = "DUMMY_SPIRAL_PLAINTEXT";
-    setSpiralPlaintext(spiralDecryptedText);
-    setSpiralDecryptionStatus(DecryptionState.DONE);
+    let spiralDecryptionResult = await SpiralMatrixDecryption(
+      ciphertext,
+      spiralKey
+    );
 
+    setSpiralPlaintext(spiralDecryptionResult);
+    setSpiralDecryptionStatus(DecryptionState.DONE);
+  };
+
+  // Symmetric decryption function
+  const handleSymmetricDecryption = async () => {
+    if (symmetricKey.trim() === "") {
+      return;
+    }
     setSymmetricDecryptionStatus(DecryptionState.IN_PROGRESS);
 
+    let [hashCode, length] = symmetricKey.split(",");
+    hashCode = parseInt(hashCode);
+    length = parseInt(length);
+
     // Call the async symmetric decryption service here
-    let symmetricDecryptedText = "DUMMY_SYMMETRIC_PLAINTEXT";
+    let symmetricDecryptedText = await CeaserCipherDecryption(
+      spiralPlaintext, // Use the spiralPlaintext state here
+      hashCode,
+      length
+    );
     setSymmetricPlaintext(symmetricDecryptedText);
     setSymmetricDecryptionStatus(DecryptionState.DONE);
 
@@ -97,34 +160,42 @@ export default function Decryption() {
         >
           Cipher Text
         </Typography>
-        <TextareaAutosize
-          value={ciphertext}
-          onChange={(e) => setCiphertext(e.target.value)}
-          disabled={
-            symmetricDecryptionStatus !== DecryptionState.IDLE ||
-            spiralDecryptionStatus !== DecryptionState.IDLE
-          }
-          onKeyDown={(e) => {
-            if (
-              e.key === "Enter" &&
-              ciphertext.trim() !== "" &&
-              key1.trim() !== "" &&
-              key2.trim() !== ""
-            ) {
-              handleDecrypt();
-              e.preventDefault();
-            }
-          }}
-          style={{
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
             width: "100%",
-            overflow: "auto",
-            color: "#6c6c74",
-            backgroundColor: "#1f1f1f",
-            border: "1px solid #6c6c74",
-            padding: 10,
-            borderRadius: 5,
           }}
-        />
+        >
+          <TextareaAutosize
+            value={ciphertext}
+            onChange={(e) => setCiphertext(e.target.value)}
+            disabled={symmetricDecryptionStatus !== DecryptionState.IDLE}
+            onKeyDown={(e) => {
+              if (
+                e.key === "Enter" &&
+                ciphertext.trim() !== "" &&
+                spiralKey.trim() !== ""
+              ) {
+                handleSpiralDecryption();
+                e.preventDefault();
+              }
+            }}
+            style={{
+              flexGrow: 1,
+              overflow: "auto",
+              color: "#6c6c74",
+              backgroundColor: "#1f1f1f",
+              border: "1px solid #6c6c74",
+              padding: 10,
+              borderRadius: 5,
+            }}
+          />
+          <IconButton onClick={() => pasteValue(setCiphertext)}>
+            <ContentPasteIcon sx={{ color: "#fff" }} />
+          </IconButton>
+        </Box>
         <Typography
           variant="h6"
           className="jersey-15"
@@ -134,86 +205,53 @@ export default function Decryption() {
             mt: 2,
           }}
         >
-          Key 1
+          Spiral Key
         </Typography>
-        <TextareaAutosize
-          value={key1}
-          onChange={(e) => setKey1(e.target.value)}
-          disabled={
-            symmetricDecryptionStatus !== DecryptionState.IDLE ||
-            spiralDecryptionStatus !== DecryptionState.IDLE
-          }
-          onKeyDown={(e) => {
-            if (
-              e.key === "Enter" &&
-              ciphertext.trim() !== "" &&
-              key1.trim() !== "" &&
-              key2.trim() !== ""
-            ) {
-              handleDecrypt();
-              e.preventDefault();
-            }
-          }}
-          style={{
-            width: "100%",
-            overflow: "auto",
-            color: "#6c6c74",
-            backgroundColor: "#1f1f1f",
-            border: "1px solid #6c6c74",
-            padding: 10,
-            borderRadius: 5,
-          }}
-        />
-        <Typography
-          variant="h6"
-          className="jersey-15"
+        <Box
           sx={{
-            textAlign: "center",
-            mb: 1,
-            mt: 2,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            width: "100%",
           }}
         >
-          Key 2
-        </Typography>
-        <TextareaAutosize
-          value={key2}
-          onChange={(e) => setKey2(e.target.value)}
-          disabled={
-            symmetricDecryptionStatus !== DecryptionState.IDLE ||
-            spiralDecryptionStatus !== DecryptionState.IDLE
-          }
-          onKeyDown={(e) => {
-            if (
-              e.key === "Enter" &&
-              ciphertext.trim() !== "" &&
-              key1.trim() !== "" &&
-              key2.trim() !== ""
-            ) {
-              handleDecrypt();
-              e.preventDefault();
-            }
-          }}
-          style={{
-            width: "100%",
-            overflow: "auto",
-            color: "#6c6c74",
-            backgroundColor: "#1f1f1f",
-            border: "1px solid #6c6c74",
-            padding: 10,
-            borderRadius: 5,
-          }}
-        />
+          <TextareaAutosize
+            value={spiralKey}
+            onChange={(e) => setSpiralKey(e.target.value)}
+            disabled={symmetricDecryptionStatus !== DecryptionState.IDLE}
+            onKeyDown={(e) => {
+              if (
+                e.key === "Enter" &&
+                ciphertext.trim() !== "" &&
+                spiralKey.trim() !== ""
+              ) {
+                handleSpiralDecryption();
+                e.preventDefault();
+              }
+            }}
+            style={{
+              width: "100%",
+              overflow: "auto",
+              color: "#6c6c74",
+              backgroundColor: "#1f1f1f",
+              border: "1px solid #6c6c74",
+              padding: 10,
+              borderRadius: 5,
+            }}
+          />
+          <IconButton onClick={() => pasteValue(setSpiralKey)}>
+            <ContentPasteIcon sx={{ color: "#fff" }} />
+          </IconButton>
+        </Box>
         <Button
           variant="contained"
-          startIcon={<LockIcon />}
+          startIcon={<LockOpenIcon />}
           onClick={() => {
-            handleDecrypt();
+            handleSpiralDecryption();
           }}
           disabled={
             !ciphertext.trim() ||
-            !key1.trim() ||
-            !key2.trim() ||
-            symmetricDecryptionStatus !== DecryptionState.IDLE ||
+            !spiralKey.trim() ||
             spiralDecryptionStatus !== DecryptionState.IDLE
           }
           sx={{
@@ -307,6 +345,78 @@ export default function Decryption() {
                 {spiralPlaintext}
               </Typography>
             </Box>
+            <Typography
+              variant="h6"
+              className="jersey-15"
+              sx={{
+                textAlign: "center",
+                mb: 1,
+                mt: 2,
+              }}
+            >
+              Symmetric Key
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <TextareaAutosize
+                value={symmetricKey}
+                onChange={(e) => setSymmetricKey(e.target.value)}
+                disabled={symmetricDecryptionStatus !== DecryptionState.IDLE}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" &&
+                    ciphertext.trim() !== "" &&
+                    spiralKey.trim() !== "" &&
+                    symmetricKey.trim() !== ""
+                  ) {
+                    handleSymmetricDecryption();
+                    e.preventDefault();
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  overflow: "auto",
+                  color: "#6c6c74",
+                  backgroundColor: "#1f1f1f",
+                  border: "1px solid #6c6c74",
+                  padding: 10,
+                  borderRadius: 5,
+                }}
+              />
+              <IconButton onClick={() => pasteValue(setSymmetricKey)}>
+                <ContentPasteIcon sx={{ color: "#fff" }} />
+              </IconButton>
+            </Box>
+            <Button
+              variant="contained"
+              onClick={() => {
+                handleSymmetricDecryption();
+              }}
+              disabled={
+                !ciphertext.trim() ||
+                !spiralKey.trim() ||
+                !symmetricKey.trim() ||
+                symmetricDecryptionStatus !== DecryptionState.IDLE ||
+                spiralDecryptionStatus !== DecryptionState.DONE
+              }
+              sx={{
+                background: "#8d5380",
+                mt: 3,
+                "&:hover": {
+                  background: "#fa9c2f",
+                },
+              }}
+            >
+              <Typography variant="body" className="jersey-15">
+                Continue
+              </Typography>
+            </Button>
           </Box>
         )}
       </Box>
@@ -315,7 +425,7 @@ export default function Decryption() {
         sx={{
           justifyContent: "center",
           display: "flex",
-          mt: 5,
+          mt: 10,
         }}
       >
         {spiralDecryptionStatus === DecryptionState.DONE &&
@@ -423,7 +533,7 @@ export default function Decryption() {
                     mr: 1,
                   }}
                 >
-                  Deciphered Plain Text =
+                  Plain Text =
                 </Typography>
                 <TextareaAutosize
                   value={finalCipher}

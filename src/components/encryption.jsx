@@ -8,13 +8,16 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import "../app/globals.css";
 import { useState, useEffect, useRef } from "react";
 
+import { CeaserCipherEncryption } from "@/services/ceaserCipher";
+import { SpiralMatrixEncryption } from "@/services/spiralMatrixCipher";
+
 export default function Encryption() {
   const [plaintext, setPlaintext] = useState("");
   const [symmetricCipher, setSymmetricCipher] = useState("");
   const [spiralCipher, setSpiralCipher] = useState("");
   const [finalCipher, setFinalCipher] = useState("");
-  const [key1, setKey1] = useState("");
-  const [key2, setKey2] = useState("");
+  const [symmetricKey, setSymmetricKey] = useState([]);
+  const [spiralKey, setSpiralKey] = useState([]);
 
   const [cipherCopied, setCipherCopied] = useState(false);
   const [key1Copied, setKey1Copied] = useState(false);
@@ -49,32 +52,39 @@ export default function Encryption() {
     spiralEncryptionStatus,
   ]);
 
-  function handleEncrypt() {
+  const handleEncrypt = async () => {
     if (plaintext.trim() === "") {
       return;
     }
     setSymmetricEncryptionStatus(EncryptionState.IN_PROGRESS);
 
     // Call the async symmetric encryption service here
-    let [symmetricEncryptedText, generatedKey1, generatedKey2] = [
-      "DUMMY_SYMMETRIC_CIPHER",
-      "DUMMY_KEY_1",
-      "DUMMY_KEY_2",
-    ];
-    setSymmetricCipher(symmetricEncryptedText);
-    setKey1(generatedKey1);
-    setKey2(generatedKey2);
+    let symmetricEncryptionResult = await CeaserCipherEncryption(plaintext);
+    // [
+    //   "DUMMY_SYMMETRIC_CIPHER",
+    //   "DUMMY_KEY_1",
+    //   "DUMMY_KEY_2",
+    // ];
+    setSymmetricCipher(symmetricEncryptionResult.ciphertextC);
+    setSymmetricKey([
+      symmetricEncryptionResult.hashCode,
+      symmetricEncryptionResult.length,
+    ]);
     setSymmetricEncryptionStatus(EncryptionState.DONE);
 
     setSpiralEncryptionStatus(EncryptionState.IN_PROGRESS);
 
     // Call the async spiral encryption service here
-    let spiralEncryptedText = "DUMMY_SPIRAL_CIPHER";
-    setSpiralCipher(spiralEncryptedText);
+    let spiralEncryptionResult = SpiralMatrixEncryption(
+      symmetricEncryptionResult.ciphertextC
+    );
+    // "DUMMY_SPIRAL_CIPHER";
+    setSpiralCipher(spiralEncryptionResult.ciphertextS);
+    setSpiralKey(spiralEncryptionResult.keystring);
     setSpiralEncryptionStatus(EncryptionState.DONE);
 
-    setFinalCipher(spiralEncryptedText);
-  }
+    setFinalCipher(spiralEncryptionResult.ciphertextS);
+  };
 
   return (
     <div>
@@ -342,7 +352,7 @@ export default function Encryption() {
                     mr: 1,
                   }}
                 >
-                  Generated Cipher =
+                  Cipher Text =
                 </Typography>
                 <TextareaAutosize
                   value={finalCipher}
@@ -387,10 +397,10 @@ export default function Encryption() {
                     mr: 1,
                   }}
                 >
-                  Key 1 =
+                  Symmetric Key =
                 </Typography>
                 <TextareaAutosize
-                  value={key1}
+                  value={symmetricKey[0] + ", " + symmetricKey[1]}
                   disabled
                   maxRows={3}
                   style={{
@@ -406,7 +416,7 @@ export default function Encryption() {
                 />
                 <IconButton
                   onClick={() => {
-                    navigator.clipboard.writeText(key1);
+                    navigator.clipboard.writeText(symmetricKey);
                     setKey1Copied(true);
                     setTimeout(() => setKey1Copied(false), 3000);
                   }}
@@ -432,10 +442,10 @@ export default function Encryption() {
                     mr: 1,
                   }}
                 >
-                  Key 2 =
+                  Spiral Key =
                 </Typography>
                 <TextareaAutosize
-                  value={key2}
+                  value={spiralKey}
                   disabled
                   maxRows={3}
                   style={{
@@ -451,7 +461,7 @@ export default function Encryption() {
                 />
                 <IconButton
                   onClick={() => {
-                    navigator.clipboard.writeText(key2);
+                    navigator.clipboard.writeText(spiralKey);
                     setKey2Copied(true);
                     setTimeout(() => setKey2Copied(false), 3000);
                   }}
