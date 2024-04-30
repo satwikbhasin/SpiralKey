@@ -4,10 +4,12 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import CircularProgress from "@mui/material/CircularProgress";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import "../app/globals.css";
 import { useState, useEffect, useRef } from "react";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import { SpiralMatrixDecryption } from "@/services/spiralMatrixCipher";
 import { CeaserCipherDecryption } from "@/services/ceaserCipher";
@@ -59,41 +61,6 @@ export default function Decryption() {
     symmetricDecryptionStatus,
     spiralDecryptionStatus,
   ]);
-
-  // const handleDecrypt = async () => {
-  //   if (
-  //     ciphertext.trim() === "" ||
-  //     spiralKey.trim() === "" ||
-  //     symmetricKey.trim() === ""
-  //   ) {
-  //     return;
-  //   }
-  //   setSpiralDecryptionStatus(DecryptionState.IN_PROGRESS);
-
-  //   // Call the async spiral decryption service here
-  //   let spiralDecryptionResult = SpiralMatrixDecryption(ciphertext, spiralKey);
-  //   console.log(spiralDecryptionResult);
-  //   // "DUMMY_SPIRAL_PLAINTEXT";
-  //   setSpiralPlaintext(spiralDecryptionResult);
-  //   setSpiralDecryptionStatus(DecryptionState.DONE);
-
-  //   setSymmetricDecryptionStatus(DecryptionState.IN_PROGRESS);
-
-  //   let [hashCode, length] = symmetricKey.split(",");
-  //   hashCode = parseInt(hashCode);
-  //   length = parseInt(length);
-
-  //   // Call the async symmetric decryption service here
-  //   let symmetricDecryptedText = CeaserCipherDecryption(
-  //     spiralDecryptionResult,
-  //     hashCode,
-  //     length
-  //   );
-  //   setSymmetricPlaintext(symmetricDecryptedText);
-  //   setSymmetricDecryptionStatus(DecryptionState.DONE);
-
-  //   setFinalCipher(symmetricDecryptedText);
-  // };
 
   // Spiral decryption function
   const handleSpiralDecryption = async () => {
@@ -345,17 +312,31 @@ export default function Decryption() {
                 {spiralPlaintext}
               </Typography>
             </Box>
-            <Typography
-              variant="h6"
-              className="jersey-15"
+            <Box
               sx={{
-                textAlign: "center",
-                mb: 1,
+                display: "flex",
+                flexDirection: "row",
+                alignContent: "center",
+                alignItems: "center",
                 mt: 2,
               }}
             >
-              Symmetric Key
-            </Typography>
+              <Typography
+                variant="h6"
+                className="jersey-15"
+                sx={{
+                  textAlign: "center",
+                }}
+              >
+                Symmetric Key
+              </Typography>
+              <Tooltip
+                sx={{ fontSize: "15px", ml: 1 }}
+                title="Hashcode, Key Length"
+              >
+                <InfoOutlinedIcon />
+              </Tooltip>
+            </Box>
             <Box
               sx={{
                 display: "flex",

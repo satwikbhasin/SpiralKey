@@ -3,6 +3,8 @@ import { Typography, TextareaAutosize, Box, Button } from "@mui/material";
 import LockIcon from "@mui/icons-material/LockOutlined";
 import CircularProgress from "@mui/material/CircularProgress";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Tooltip from "@mui/material/Tooltip";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import IconButton from "@mui/material/IconButton";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import "../app/globals.css";
@@ -385,19 +387,36 @@ export default function Encryption() {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
+                  justifyContent: "center",
+                  alignContent: "center",
                   mb: 5,
                 }}
               >
+                <Tooltip
+                  sx={{ fontSize: "15px", mr: 1 }}
+                  title="Hashcode, Key Length"
+                >
+                  <InfoOutlinedIcon />
+                </Tooltip>
                 <Typography
                   variant="h6"
                   className="jersey-15"
                   sx={{
                     textAlign: "center",
-                    mb: 1,
-                    mr: 1,
                   }}
                 >
-                  Symmetric Key =
+                  Symmetric Key
+                </Typography>
+                <Typography
+                  variant="h6"
+                  className="jersey-15"
+                  sx={{
+                    textAlign: "center",
+                    mr: 1,
+                    ml: 1,
+                  }}
+                >
+                  =
                 </Typography>
                 <TextareaAutosize
                   value={symmetricKey[0] + ", " + symmetricKey[1]}
